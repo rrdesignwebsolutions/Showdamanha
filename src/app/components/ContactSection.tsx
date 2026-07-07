@@ -1,34 +1,27 @@
-import { Phone, Mail, MessageCircle, MapPin } from 'lucide-react';
+import { Phone, Instagram, MapPin } from 'lucide-react';
 
 export function ContactSection() {
   const contactItems = [
     {
       icon: Phone,
       title: 'WhatsApp',
-      value: '(35) 9xxxx-xxxx',
+      value: '(35) 99131-4750',
       note: 'Envie mensagens, sugestões ou participe ao vivo!',
-      href: 'https://wa.me/5535900000000',
+      href: 'https://wa.me/553591314750',
     },
     {
-      icon: Mail,
-      title: 'E-mail',
-      value: 'showdamanha@panoramafm.com.br',
-      note: 'Envie suas dúvidas e sugestões',
-      href: 'mailto:showdamanha@panoramafm.com.br',
-    },
-    {
-      icon: MessageCircle,
-      title: 'Redes Sociais',
-      value: '@showdamanha',
+      icon: Instagram,
+      title: 'Instagram',
+      value: '@alexandre_robbie',
       note: 'Siga nas redes e interaja com a gente!',
-      href: '#',
+      href: 'https://www.instagram.com/alexandre_robbie/',
     },
     {
       icon: MapPin,
       title: 'Localização',
-      value: 'Itajubá / MG',
-      note: 'Panorama FM 103,5 — A voz de Itajubá',
-      href: '#',
+      value: 'Rádio Panorama FM 103,5',
+      note: 'Auto Estrada Bela Vista s/n, Itajubá - MG, 37502-454',
+      href: 'https://google.com/maps/place/Rádio+Panorama+FM/data=!4m2!3m1!1s0x0:0xa8cd5d3532161f85?sa=X&ved=1t:2428&ictx=111',
     },
   ];
 
@@ -68,6 +61,18 @@ export function ContactSection() {
             </a>
           ))}
         </div>
+        <div className="mt-10 rounded-2xl overflow-hidden" style={{ background: '#120803', border: '1px solid rgba(201,169,97,0.2)' }}>
+          <div className="aspect-[16/9] sm:aspect-[4/3]">
+            <iframe
+              title="Mapa da Rádio Panorama FM"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3675.7234818965316!2d-46.60046658500595!3d-22.42314308528495!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c6dc8d24ebffe1%3A0xa8cd5d3532161f85!2sR%C3%A1dio%20Panorama%20FM!5e0!3m2!1spt-BR!2sbr!4v1719210000000"
+              className="w-full h-full border-0"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Participate panel */}
@@ -105,7 +110,7 @@ export function ContactSection() {
           className="rounded-xl p-5 text-center"
           style={{ background: 'rgba(201,169,97,0.08)', border: '1px solid rgba(201,169,97,0.2)' }}
         >
-          <p className="text-[#C9A961] text-lg mb-1">Segunda a Sexta · 7h às 10h</p>
+          <p className="text-[#C9A961] text-lg mb-1">Segunda a Sábado · 7h45 às 11h</p>
           <p className="text-[#7A6040]">Estamos ao vivo esperando você!</p>
         </div>
       </div>

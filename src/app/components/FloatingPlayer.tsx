@@ -27,7 +27,7 @@ export function FloatingPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange
         boxShadow: '0 -4px 30px rgba(0,0,0,0.6)',
       }}
     >
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-4">
+      <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center gap-4">
 
         {/* Live dot + station */}
         <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -47,57 +47,61 @@ export function FloatingPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange
           </div>
         </div>
 
-        {/* Play / Pause */}
-        <button
-          onClick={onTogglePlay}
-          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 transition-transform hover:scale-105 active:scale-95"
-          style={{ background: 'linear-gradient(135deg, #C9A961 0%, #A8832A 100%)' }}
-          aria-label={isPlaying ? 'Pausar' : 'Tocar'}
-        >
-          {isPlaying ? (
-            <Pause className="w-5 h-5 text-[#0D0804]" />
-          ) : (
-            <Play className="w-5 h-5 text-[#0D0804] ml-0.5" />
-          )}
-        </button>
+        <div className="flex items-center gap-4 flex-shrink-0">
+          {/* Play / Pause */}
+          <button
+            onClick={onTogglePlay}
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+            style={{ background: 'linear-gradient(135deg, #C9A961 0%, #A8832A 100%)' }}
+            aria-label={isPlaying ? 'Pausar' : 'Tocar'}
+          >
+            {isPlaying ? (
+              <Pause className="w-5 h-5 text-[#0D0804]" />
+            ) : (
+              <Play className="w-5 h-5 text-[#0D0804] ml-0.5" />
+            )}
+          </button>
 
-        {/* Equalizer (playing state) */}
-        {isPlaying && (
-          <div className="hidden sm:flex items-end gap-0.5 h-5">
-            {[3, 5, 4, 6, 3, 5].map((h, i) => (
-              <div
-                key={i}
-                className="w-1 rounded-sm"
+          <div className="flex items-center gap-3">
+            {/* Equalizer (playing state) */}
+            {isPlaying && (
+              <div className="hidden sm:flex items-end gap-0.5 h-5">
+                {[3, 5, 4, 6, 3, 5].map((h, i) => (
+                  <div
+                    key={i}
+                    className="w-1 rounded-sm"
+                    style={{
+                      height: `${h * 3}px`,
+                      background: '#C9A961',
+                      animation: `eqBar 0.6s ease-in-out ${i * 0.1}s infinite alternate`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Volume (hidden on small mobile) */}
+            <div className="hidden md:flex items-center gap-2 min-w-[180px]">
+              <Volume2 className="w-4 h-4 text-[#C9A961] flex-shrink-0" />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume}
+                onChange={(e) => onVolumeChange(Number(e.target.value))}
+                className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
                 style={{
-                  height: `${h * 3}px`,
-                  background: '#C9A961',
-                  animation: `eqBar 0.6s ease-in-out ${i * 0.1}s infinite alternate`,
+                  background: `linear-gradient(to right, #C9A961 0%, #C9A961 ${volume}%, #2A1508 ${volume}%, #2A1508 100%)`,
                 }}
               />
-            ))}
+            </div>
           </div>
-        )}
-
-        {/* Volume (hidden on small mobile) */}
-        <div className="hidden md:flex items-center gap-2 w-32">
-          <Volume2 className="w-4 h-4 text-[#C9A961] flex-shrink-0" />
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={volume}
-            onChange={(e) => onVolumeChange(Number(e.target.value))}
-            className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
-            style={{
-              background: `linear-gradient(to right, #C9A961 0%, #C9A961 ${volume}%, #2A1508 ${volume}%, #2A1508 100%)`,
-            }}
-          />
         </div>
 
         {/* Go to full player */}
         <button
           onClick={scrollToRadio}
-          className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs transition-colors flex-shrink-0"
+          className="flex items-center gap-1 px-3 py-2 rounded-lg text-xs transition-colors flex-shrink-0 ml-auto"
           style={{ color: '#7A6040', background: 'rgba(201,169,97,0.08)', border: '1px solid rgba(201,169,97,0.15)' }}
         >
           <ChevronUp className="w-3.5 h-3.5" />

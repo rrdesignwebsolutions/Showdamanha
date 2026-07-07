@@ -14,11 +14,30 @@ import logo from '../imports/logo_show_da_manha_vetorizada_varia__o_3.png';
 import logoMicrofone from '../imports/ChatGPT_Image_1_de_jun._de_2026__16_52_06.png';
 import coverImage from '../imports/Capas_facebook-1.png';
 
+const RADIO_STREAM_URL = 'https://s33.maxcast.com.br:8192/live';
+
 export default function App() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(80);
   const [showFloating, setShowFloating] = useState(false);
+
+  // Initialize shared audio element once
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.crossOrigin = 'anonymous';
+    audio.volume = volume / 100;
+  }, []);
+
+  // Keep audio volume in sync with state without reloading the stream
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = volume / 100;
+  }, [volume]);
 
   // Show floating player after scrolling past hero
   useEffect(() => {
@@ -29,19 +48,33 @@ export default function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     if (!audioRef.current) return;
+
+    const audio = audioRef.current;
+    audio.volume = volume / 100;
+    audio.muted = volume === 0;
+
     if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+      audio.pause();
+      setIsPlaying(false);
+      return;
     }
-    setIsPlaying((p) => !p);
+
+    try {
+      await audio.play();
+      setIsPlaying(true);
+    } catch (error) {
+      console.error('Erro ao iniciar a rádio Panorama FM', error);
+      setIsPlaying(false);
+    }
   };
 
   const handleVolumeChange = (v: number) => {
     setVolume(v);
-    if (audioRef.current) audioRef.current.volume = v / 100;
+    if (audioRef.current) {
+      audioRef.current.volume = v / 100;
+    }
   };
 
   return (
@@ -49,11 +82,9 @@ export default function App() {
       <Header />
 
       {/* Shared audio element */}
-      <audio
-        ref={audioRef}
-        src="http://stream.panoramafm.com.br:8000/stream"
-        preload="none"
-      />
+      <audio ref={audioRef} preload="auto" style={{ display: 'none' }}>
+        <source src={RADIO_STREAM_URL} type="audio/mpeg" />
+      </audio>
 
       <main className="pt-20">
 
@@ -79,45 +110,18 @@ export default function App() {
           </div>
 
           {/* Content */}
-          <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <div className="relative z-10 w-full mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
 
-            {/* Logo */}
-            <div className="flex justify-center mb-8">
-              <div
-                className="rounded-2xl p-6 sm:p-8"
-                style={{
-                  background: 'rgba(13,8,4,0.55)',
-                  border: '1px solid rgba(201,169,97,0.3)',
-                  backdropFilter: 'blur(8px)',
-                }}
-              >
+            {/* Logo centralizada e maior */}
+            <div className="flex justify-center items-center mb-8">
+              <div className="rounded-2xl p-4 sm:p-6" style={{ background: 'transparent' }}>
                 <img
                   src={logo}
-                  alt="Show da Manhã com Alexandre Robbie"
-                  className="w-56 sm:w-72 md:w-80 h-auto"
+                  alt="Show da Manhã"
+                  className="w-80 sm:w-[560px] md:w-[720px] lg:w-[880px] xl:w-[1000px] h-auto mx-auto"
+                  style={{ maxWidth: '95vw' }}
                 />
               </div>
-            </div>
-
-            {/* Subtitle */}
-            <p
-              className="text-xl sm:text-2xl mb-3 tracking-wide"
-              style={{ color: '#E8C87A', textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}
-            >
-              COM ALEXANDRE ROBBIE
-            </p>
-
-            <div
-              className="inline-flex items-center gap-2 px-6 py-2 rounded-full mb-12 mx-auto"
-              style={{
-                border: '1px solid rgba(201,169,97,0.5)',
-                background: 'rgba(13,8,4,0.5)',
-                backdropFilter: 'blur(4px)',
-              }}
-            >
-              <span className="text-[#C9A961] tracking-widest text-sm sm:text-base">
-                INFORMAÇÃO • MÚSICA • COMPANHIA
-              </span>
             </div>
 
             {/* Feature icons */}
@@ -157,12 +161,12 @@ export default function App() {
             >
               <div className="flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-[#C9A961]" />
-                <span className="text-[#F5E6D3] text-lg">Segunda a Sexta</span>
+                <span className="text-[#F5E6D3] text-lg">Segunda a Sábado</span>
               </div>
               <div className="hidden sm:block w-px h-5 bg-[#C9A961]/30" />
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-[#C9A961]" />
-                <span className="text-[#F5E6D3] text-lg">7h às 10h</span>
+                <span className="text-[#F5E6D3] text-lg">7h45 às 11h</span>
               </div>
               <div className="hidden sm:block w-px h-5 bg-[#C9A961]/30" />
               <div className="flex items-center gap-3">

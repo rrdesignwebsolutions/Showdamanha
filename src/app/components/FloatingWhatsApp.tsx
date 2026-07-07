@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 export function FloatingWhatsApp() {
   const [expanded, setExpanded] = useState(false);
-  const whatsappNumber = '5535900000000';
+  const whatsappNumber = '553591314750';
   const message = encodeURIComponent('Olá! Quero participar do Show da Manhã com Alexandre Robbie!');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 

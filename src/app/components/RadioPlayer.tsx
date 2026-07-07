@@ -1,5 +1,5 @@
 import { Radio, Play, Pause, Volume2, VolumeX } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 interface RadioPlayerProps {
   isPlaying: boolean;
@@ -11,7 +11,7 @@ interface RadioPlayerProps {
 export function RadioPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange }: RadioPlayerProps) {
   const [muted, setMuted] = useState(false);
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const v = Number(e.target.value);
     setMuted(v === 0);
     onVolumeChange(v);
@@ -40,7 +40,7 @@ export function RadioPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange }:
               PANORAMA FM 103,5
             </h3>
           </div>
-          <p className="text-[#9A7A55] text-lg">A voz de Itajubá</p>
+          <p className="text-[#9A7A55] text-lg">A Primeira do Seu Rádio</p>
         </div>
 
         {/* Play button */}
@@ -129,7 +129,7 @@ export function RadioPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange }:
         </div>
 
         <p className="text-[#6B5D4F] text-sm text-center">
-          Transmissão ao vivo · Segunda a Sexta · 7h às 10h
+          Transmissão ao vivo
         </p>
       </div>
 

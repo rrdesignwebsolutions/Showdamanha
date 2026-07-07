@@ -162,8 +162,9 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
       aria-roledescription="slide"
       data-slot="carousel-item"
       className={cn(
+        // make each slide full-width and center its content horizontally
         "min-w-0 shrink-0 grow-0 basis-full",
-        orientation === "horizontal" ? "pl-4" : "pt-4",
+        orientation === "horizontal" ? "pl-4 flex justify-center" : "pt-4",
         className,
       )}
       {...props}
@@ -182,13 +183,15 @@ function CarouselPrevious({
   return (
     <Button
       data-slot="carousel-previous"
-      variant={variant}
+      variant={"ghost"}
       size={size}
       className={cn(
         "absolute size-8 rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -left-12 -translate-y-1/2"
+          ? "top-1/2 left-3 md:-left-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+        // dourado + sombra, menor no mobile
+        "bg-[#C9A961]/10 border border-[#C9A961]/30 text-[#C9A961] md:scale-100 scale-90 md:shadow-[0_8px_24px_rgba(201,169,97,0.12)] shadow-[0_6px_18px_rgba(201,169,97,0.10)] hover:bg-[#C9A961]/20",
         className,
       )}
       disabled={!canScrollPrev}
@@ -212,13 +215,15 @@ function CarouselNext({
   return (
     <Button
       data-slot="carousel-next"
-      variant={variant}
+      variant={"ghost"}
       size={size}
       className={cn(
         "absolute size-8 rounded-full",
         orientation === "horizontal"
-          ? "top-1/2 -right-12 -translate-y-1/2"
+          ? "top-1/2 right-3 md:-right-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+        // dourado + sombra, menor no mobile
+        "bg-[#C9A961]/10 border border-[#C9A961]/30 text-[#C9A961] md:scale-100 scale-90 md:shadow-[0_8px_24px_rgba(201,169,97,0.12)] shadow-[0_6px_18px_rgba(201,169,97,0.10)] hover:bg-[#C9A961]/20",
         className,
       )}
       disabled={!canScrollNext}
