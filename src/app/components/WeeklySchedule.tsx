@@ -62,26 +62,16 @@ export function WeeklySchedule() {
         key={day}
         className="flex-shrink-0 w-64 md:w-auto snap-start rounded-2xl p-6 relative transition-transform hover:-translate-y-1"
         style={{
-          background: isToday
-            ? 'linear-gradient(135deg, #2E1A06 0%, #1A0A03 100%)'
-            : '#1A0A03',
-          border: isToday
-            ? '1px solid rgba(201,169,97,0.5)'
-            : '1px solid rgba(201,169,97,0.15)',
-        }}
+  background: '#1A0A03',
+  border: '1px solid rgba(201,169,97,0.15)',
+}}
       >
-        {isToday && (
-          <div
-            className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-xs tracking-wider"
-            style={{ background: 'rgba(201,169,97,0.2)', color: '#C9A961', border: '1px solid rgba(201,169,97,0.4)' }}
-          >
-            HOJE
-          </div>
-        )}
+        
 
         <div
           className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-          style={{ background: `rgba(${isToday ? '201,169,97,0.2' : '201,169,97,0.1'})` }}
+          style={{  background: 'rgba(201,169,97,0.1)'
+}}
         >
           <span className="text-sm tracking-wider" style={{ color }}>{short}</span>
         </div>

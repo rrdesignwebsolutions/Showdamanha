@@ -265,17 +265,19 @@ export default function App() {
                   </h3>
                   <div className="space-y-4 text-[#C4A882] text-lg leading-relaxed">
                     <p>
-                      Com anos de experiência no rádio, Alexandre Robbie é a voz que acorda Itajubá
-                      todas as manhãs. Seu carisma, conhecimento e paixão pelo jornalismo fazem do
-                      Show da Manhã o programa mais ouvido da região.
+                      Sou Alexandre Robbie e dedico minha vida ao rádio desde 1976. Filho do inesquecível radialista José Moreira da Silva, cresci cercado pela comunicação e pelo espetáculo. Dessa história nasceu uma das maiores honras da minha vida: ser o único afilhado de Amácio Mazzaropi.
+
+Ao longo da minha carreira, tive a oportunidade de passar por importantes emissoras, como Rede Difusora, 99 FM, RD 90 (94.7 FM), Antena 1, FM Guarujá e outras rádios do estado de São Paulo, até encontrar em Itajubá o meu lar.
+
+Nada disso teria sido possível sem o amor e o apoio da minha mãe, Dona Didina, que aos 87 anos continua sendo minha maior inspiração e a base de toda a minha caminhada.
+
+Há 39 anos estou no ar pela Rádio Panorama FM, onde construí uma história reconhecida com o título de Cidadão Itajubense. Este espaço é um convite para compartilhar memórias, histórias e a paixão de uma vida inteira dedicada ao rádio.
+
                     </p>
-                    <p>
-                      Conhecido por sua proximidade com os ouvintes, Alexandre traz as principais
-                      notícias do dia, música de qualidade e muita interação.
-                    </p>
+                    
                     <div className="pt-6" style={{ borderTop: '1px solid rgba(201,169,97,0.2)' }}>
                       <p className="text-[#C9A961] text-xl italic">
-                        "Informação de qualidade e companhia de verdade para começar bem o seu dia!"
+                        Acompanhe meus conteúdos, inscreva-se no canal e venha reviver comigo as memórias, curiosidades e os bastidores de mais de quatro décadas dedicadas ao rádio.
                       </p>
                       <p className="text-[#7A6040] mt-2">— Alexandre Robbie</p>
                     </div>
