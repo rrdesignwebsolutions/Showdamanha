@@ -27,8 +27,8 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Install dependencies with approved builds
-        run: pnpm install --config.ignored-builds=false
+      - name: Install dependencies and allow builds
+        run: pnpm install --config.ignore-build-scripts=false
 
       - name: Generate fresh news data
         run: pnpm run generate:news
