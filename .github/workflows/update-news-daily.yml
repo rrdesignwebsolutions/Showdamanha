@@ -46,4 +46,3 @@ jobs:
             git commit -m "chore: update daily news from G1"
             git push origin HEAD:main
           fi
-
