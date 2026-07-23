@@ -13,6 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Approve build scripts
+  run: pnpm approve-builds @tailwindcss/oxide esbuild
+
+- name: Install dependencies
+  run: pnpm install
+
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
