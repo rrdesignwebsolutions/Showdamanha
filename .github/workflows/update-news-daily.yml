@@ -13,13 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Approve build scripts
-  run: pnpm approve-builds @tailwindcss/oxide esbuild
-
-- name: Install dependencies
-  run: pnpm install
-
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -34,9 +27,11 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Install dependencies and allow builds
-  run: pnpm install --only-built-dependencies=@tailwindcss/oxide --only-built-dependencies=esbuild
+      - name: Approve build scripts
+        run: pnpm approve-builds @tailwindcss/oxide esbuild
 
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Generate fresh news data
         run: pnpm run generate:news
@@ -50,5 +45,5 @@ jobs:
             echo "No news updates to commit"
           else
             git commit -m "chore: update daily news from G1"
-            git push
+            git push origin HEAD:main
           fi
