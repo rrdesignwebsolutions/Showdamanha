@@ -27,8 +27,6 @@ jobs:
           version: latest
           run_install: false
 
-
-
       - name: Install dependencies
         run: pnpm install
 
