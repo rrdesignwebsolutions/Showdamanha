@@ -28,7 +28,8 @@ jobs:
           run_install: false
 
       - name: Install dependencies and allow builds
-        run: pnpm install --config.only-built-dependencies=@tailwindcss/oxide --config.only-built-dependencies=esbuild
+  run: pnpm install --only-built-dependencies=@tailwindcss/oxide --only-built-dependencies=esbuild
+
 
       - name: Generate fresh news data
         run: pnpm run generate:news
