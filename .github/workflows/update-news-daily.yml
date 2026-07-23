@@ -11,7 +11,6 @@ permissions:
 jobs:
   refresh-news:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +25,9 @@ jobs:
         with:
           version: latest
           run_install: false
+
+      - name: Approve build scripts
+        run: pnpm approve-builds @tailwindcss/oxide esbuild
 
       - name: Install dependencies
         run: pnpm install
@@ -44,3 +46,4 @@ jobs:
             git commit -m "chore: update daily news from G1"
             git push origin HEAD:main
           fi
+
