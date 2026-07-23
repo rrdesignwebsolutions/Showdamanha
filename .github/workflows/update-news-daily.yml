@@ -27,8 +27,8 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Install dependencies allowing builds
-        run: pnpm install --unsafe-perm=true
+      - name: Install dependencies and allow builds
+        run: pnpm install --config.only-built-dependencies=@tailwindcss/oxide --config.only-built-dependencies=esbuild
 
       - name: Generate fresh news data
         run: pnpm run generate:news
