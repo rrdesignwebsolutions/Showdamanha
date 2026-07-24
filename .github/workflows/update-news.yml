@@ -42,8 +42,13 @@ jobs:
           pnpm -v
 
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Configure pnpm build permissions
+  run: |
+    pnpm config set enable-pre-post-scripts true
+    pnpm approve-builds --all || true
+
+- name: Install dependencies
+  run: pnpm install
 
 
       - name: Generate fresh news data
