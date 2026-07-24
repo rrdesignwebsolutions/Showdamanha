@@ -27,48 +27,39 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
 
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
+          run_install: false
 
 
-      - name: Check versions
+      - name: Show versions
         run: |
-          node -v
-          pnpm -v
+          node --version
+          pnpm --version
 
 
-      - name: Configure pnpm build permissions
-  run: |
-    pnpm config set enable-pre-post-scripts true
-    pnpm approve-builds --all || true
-
-- name: Install dependencies
-  run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
 
       - name: Generate fresh news data
-        run: |
-          pnpm run generate:news
+        run: pnpm run generate:news
 
 
       - name: Commit updated news file
         run: |
-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add public/news.json
 
           if git diff --cached --quiet; then
-            echo "Nenhuma notícia nova encontrada"
-            exit 0
+            echo "No news updates to commit"
+          else
+            git commit -m "chore: update daily news from G1"
+            git push origin HEAD:main
           fi
-
-          git commit -m "chore: update daily news"
-
-          git push origin HEAD:${{ github.ref_name }}
