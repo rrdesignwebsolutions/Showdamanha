@@ -26,8 +26,11 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Approve build scripts
-        run: pnpm approve-builds @tailwindcss/oxide esbuild
+      - name: Show pnpm version
+        run: pnpm --version
+
+      - name: Show Node version
+        run: node --version
 
       - name: Install dependencies
         run: pnpm install
