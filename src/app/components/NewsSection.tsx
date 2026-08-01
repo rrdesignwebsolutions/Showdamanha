@@ -53,7 +53,6 @@ export function NewsSection() {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const items = useMemo(() => newsItems.slice(0, MAX_ITEMS), [newsItems]);
 
@@ -100,7 +99,6 @@ export function NewsSection() {
 
   async function refreshNews() {
     setLoading(true);
-    setError(null);
     try {
       const response = await fetch(`/news.json?t=${Date.now()}`);
       if (!response.ok) {
@@ -127,7 +125,6 @@ export function NewsSection() {
       );
     } catch (err) {
       console.error(err);
-      setError('Não foi possível atualizar as notícias. Tente novamente mais tarde.');
     } finally {
       setLoading(false);
     }
@@ -171,11 +168,7 @@ export function NewsSection() {
         </div>
       )}
 
-      {error && (
-        <div className="text-center text-sm text-[#E08B5F] mb-6">{error}</div>
-      )}
-
-      {!loading && !items.length && !error && (
+      {!loading && !items.length && (
         <div className="text-center text-[#B8956A]">Nenhuma notícia disponível no momento.</div>
       )}
 
