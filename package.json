@@ -9,7 +9,9 @@
     "build": "pnpm run generate:news && pnpm run fetch:video && vite build",
     "dev": "vite",
     "generate:news": "node scripts/fetch-news.js",
-    "fetch:video": "node scripts/fetch-latest-video.js"
+    "fetch:video": "node scripts/fetch-latest-video.js",
+    "deploy": "pnpm run build && wrangler deploy",
+    "preview": "pnpm run build && wrangler dev"
   },
 
   "pnpm": {
@@ -88,6 +90,7 @@
     "@vitejs/plugin-react": "4.7.0",
     "fast-xml-parser": "5.3.1",
     "tailwindcss": "4.1.12",
-    "vite": "6.3.5"
+    "vite": "6.3.5",
+    "wrangler": "^4.118.0"
   }
 }

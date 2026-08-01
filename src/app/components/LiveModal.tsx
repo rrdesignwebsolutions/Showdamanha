@@ -8,15 +8,46 @@ interface LiveModalProps {
   loading: boolean;
 }
 
-function isLiveSchedule() {
+function getBrasiliaNow() {
   const now = new Date();
-  const day = now.getDay();
-  const hour = now.getHours();
-  const minute = now.getMinutes();
+  const format = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+
+  const parts = format.formatToParts(now);
+  const values = Object.fromEntries(
+    parts
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value]),
+  );
+
+  return new Date(
+    Date.UTC(
+      Number(values.year),
+      Number(values.month) - 1,
+      Number(values.day),
+      Number(values.hour),
+      Number(values.minute),
+      Number(values.second),
+    ),
+  );
+}
+
+function isLiveSchedule() {
+  const now = getBrasiliaNow();
+  const day = now.getUTCDay();
+  const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
   const isWeekday = day >= 1 && day <= 6;
-  const isWithinLiveWindow = hour > 7 || (hour === 7 && minute >= 45);
-  const isBeforeEnd = hour < 11;
-  return isWeekday && isWithinLiveWindow && isBeforeEnd;
+  const isWithinLiveWindow = totalMinutes >= 7 * 60 + 45 && totalMinutes < 11 * 60;
+
+  return isWeekday && isWithinLiveWindow;
 }
 
 function getEmbedHostUrl() {
@@ -68,8 +99,19 @@ export function LiveModal({ isOpen, onClose, videoId, channelId, loading }: Live
                 allowFullScreen
               />
             ) : (
-              <div className="flex h-full items-center justify-center p-6 text-[#B8956A]">
-                Não foi possível carregar o vídeo.
+              <div className="flex h-full min-h-[420px] flex-col items-center justify-center gap-4 p-6 text-center text-[#B8956A]">
+                <p className="text-xl font-semibold text-[#E8C87A]">A live não está aberta no momento.</p>
+                <p className="max-w-md text-sm leading-6">
+                  O canal do YouTube será aberto para você acompanhar a transmissão em tempo real.
+                </p>
+                <a
+                  href="https://www.youtube.com/@alexandrerobbie"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-2xl bg-[#C9A961] px-4 py-3 text-sm font-semibold text-[#0D0804] transition hover:bg-[#d8c279]"
+                >
+                  Abrir canal do YouTube
+                </a>
               </div>
             )}
           </div>
@@ -79,7 +121,7 @@ export function LiveModal({ isOpen, onClose, videoId, channelId, loading }: Live
               liveOpen ? (
                 <iframe
                   className="h-full w-full"
-                  src={`https://www.youtube.com/live_chat?v=${videoId}&embed_host_url=${encodeURIComponent(embedHostUrl)}`}
+                  src={`https://www.youtube.com/live_chat?channel=${channelId ?? ''}&embed_host_url=${encodeURIComponent(embedHostUrl)}`}
                   title="Chat do YouTube"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 />
@@ -110,10 +152,7 @@ export function LiveModal({ isOpen, onClose, videoId, channelId, loading }: Live
           </div>
         </div>
 
-        <div className="border-t border-[#C9A961]/20 bg-[#120803] p-4 text-sm text-[#B8956A]">
-          <p>Se estiver dentro do horário de segunda a sábado, das 7h45 às 11h, o vídeo exibido será a live do dia.</p>
-          <p className="mt-2">Fora desse horário, o player mostra o último vídeo publicado no canal.</p>
-        </div>
+        <div className="border-t border-[#C9A961]/20 bg-[#120803] p-4 text-sm text-[#B8956A]" />
       </div>
     </div>
   );

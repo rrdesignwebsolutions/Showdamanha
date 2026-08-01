@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Youtube, ExternalLink, Play } from 'lucide-react';
 import { LiveModal } from './LiveModal';
+
+const LIVE_CHANNEL_ID = 'UCZkTiNo5UhIcP9XHWG4tGZg';
 
 export function YouTubeSection() {
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
   const [videoId, setVideoId] = useState<string | null>(null);
-  const [channelId, setChannelId] = useState<string | null>(null);
+  const [channelId, setChannelId] = useState<string | null>(LIVE_CHANNEL_ID);
   const [loadingVideo, setLoadingVideo] = useState(false);
   const youtubeChannelUrl = 'https://www.youtube.com/@alexandrerobbie';
 
@@ -16,21 +18,22 @@ export function YouTubeSection() {
     cta: 'Assistir no YouTube',
   };
 
-  const handlePlayClick = async () => {
-    setIsLiveModalOpen(true);
+  async function refreshLatestVideo() {
     setLoadingVideo(true);
     setVideoId(null);
+    setChannelId(LIVE_CHANNEL_ID);
 
     try {
-      const response = await fetch('/latest-video.json');
+      const response = await fetch(`/latest-video.json?t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       if (response.ok) {
         const data = await response.json();
         setVideoId(data.videoId ?? null);
-        setChannelId(data.channelId ?? null);
+        setChannelId(data.channelId ?? LIVE_CHANNEL_ID);
       } else {
         console.error('Falha ao carregar latest-video.json');
         setVideoId(null);
-        setChannelId(null);
       }
     } catch (error) {
       console.error('Erro ao buscar vídeo:', error);
@@ -38,7 +41,20 @@ export function YouTubeSection() {
     } finally {
       setLoadingVideo(false);
     }
+  }
+
+  const handlePlayClick = async () => {
+    setIsLiveModalOpen(true);
+    await refreshLatestVideo();
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refreshLatestVideo();
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="space-y-10">
