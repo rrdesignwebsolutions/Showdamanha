@@ -80,16 +80,17 @@ export function FloatingPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange
               </div>
             )}
 
-            {/* Volume (hidden on small mobile) */}
-            <div className="hidden md:flex items-center gap-2 min-w-[180px]">
+            {/* Volume */}
+            <div className="flex items-center gap-2 min-w-[110px] sm:min-w-[180px]">
               <Volume2 className="w-4 h-4 text-[#C9A961] flex-shrink-0" />
               <input
                 type="range"
                 min="0"
                 max="100"
                 value={volume}
+                onInput={(e) => onVolumeChange(Number(e.target.value))}
                 onChange={(e) => onVolumeChange(Number(e.target.value))}
-                className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
+                className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer touch-pan-y"
                 style={{
                   background: `linear-gradient(to right, #C9A961 0%, #C9A961 ${volume}%, #2A1508 ${volume}%, #2A1508 100%)`,
                 }}

@@ -13,8 +13,9 @@ export function RadioPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange }:
 
   const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const v = Number(e.target.value);
-    setMuted(v === 0);
-    onVolumeChange(v);
+    const safeVolume = Math.max(0, Math.min(100, Number.isFinite(v) ? v : 0));
+    setMuted(safeVolume === 0);
+    onVolumeChange(safeVolume);
   };
 
   const toggleMute = () => {
@@ -119,8 +120,9 @@ export function RadioPlayer({ isPlaying, volume, onTogglePlay, onVolumeChange }:
             min="0"
             max="100"
             value={displayVolume}
+            onInput={handleVolumeChange}
             onChange={handleVolumeChange}
-            className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
+            className="flex-1 h-2 rounded-full appearance-none cursor-pointer touch-pan-y"
             style={{
               background: `linear-gradient(to right, #C9A961 0%, #C9A961 ${displayVolume}%, #2A1508 ${displayVolume}%, #2A1508 100%)`,
             }}

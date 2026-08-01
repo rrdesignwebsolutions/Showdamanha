@@ -71,9 +71,11 @@ export default function App() {
   };
 
   const handleVolumeChange = (v: number) => {
-    setVolume(v);
+    const safeVolume = Math.max(0, Math.min(100, Number.isFinite(v) ? v : 0));
+    setVolume(safeVolume);
     if (audioRef.current) {
-      audioRef.current.volume = v / 100;
+      audioRef.current.volume = safeVolume / 100;
+      audioRef.current.muted = safeVolume === 0;
     }
   };
 
