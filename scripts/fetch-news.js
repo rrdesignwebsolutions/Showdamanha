@@ -29,13 +29,15 @@ async function fetchG1News() {
     }
 
     // Formata os dados das notícias do G1
-    const newsItems = items.map(item => ({
-      title: item.title || '',
-      description: item.description ? item.description.replace(/<[^>]*>?/gm, '') : '', // Remove tags HTML se houver
-      url: item.link || '',
-      publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
-      source: 'G1 Sul de Minas'
-    }));
+    const newsItems = items
+      .map(item => ({
+        title: item.title || '',
+        description: item.description ? item.description.replace(/<[^>]*>?/gm, '') : '',
+        url: item.link || '',
+        publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
+        source: 'G1 Sul de Minas'
+      }))
+      .filter(item => !/^\s*(vídeos|videos)\b/i.test(item.title));
 
     const outputDir = path.resolve('public');
     if (!fs.existsSync(outputDir)) {

@@ -181,7 +181,7 @@ export function NewsSection() {
 
       {!loading && sanitizedItems.length > 0 && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {sanitizedItems.map(({ title, description, url, source, publishedAt, category }) => {
+          {sanitizedItems.map(({ title, url, source, publishedAt, category }) => {
             const tag = category || source || 'Notícias';
             const catColor = categoryColors[tag] || '#C9A961';
             const dateLabel = publishedAt ? new Date(publishedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Data indisponível';
@@ -192,7 +192,7 @@ export function NewsSection() {
                 href={url}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-2xl p-7 flex flex-col gap-4 transition-transform hover:-translate-y-1 hover:bg-[#24150a]"
+                className="rounded-2xl p-5 flex flex-col gap-4 transition-transform hover:-translate-y-1 hover:bg-[#24150a]"
                 style={{ background: '#1A0A03', border: '1px solid rgba(201,169,97,0.15)' }}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -208,14 +208,13 @@ export function NewsSection() {
                   </div>
                 </div>
 
-                <h3 className="text-[#E8C87A] leading-snug">{title}</h3>
-                <p className="text-[#7A6040] text-sm leading-relaxed flex-1">{description}</p>
+                <h3 className="text-[#E8C87A] leading-snug text-base sm:text-lg line-clamp-3">{title}</h3>
 
                 <div
-                  className="flex items-center gap-2 pt-4"
+                  className="flex items-center gap-2 pt-2"
                   style={{ borderTop: '1px solid rgba(201,169,97,0.1)' }}
                 >
-                  <span className="text-[#5A4030] text-xs">Ver notícia completa</span>
+                  <span className="text-[#5A4030] text-xs">Abrir matéria</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#C9A961] ml-auto" />
                 </div>
               </a>
