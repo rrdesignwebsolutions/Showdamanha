@@ -5,6 +5,7 @@ import { LiveModal } from './LiveModal';
 export function YouTubeSection() {
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [channelId, setChannelId] = useState<string | null>(null);
   const [loadingVideo, setLoadingVideo] = useState(false);
   const youtubeChannelUrl = 'https://www.youtube.com/@alexandrerobbie';
 
@@ -25,9 +26,11 @@ export function YouTubeSection() {
       if (response.ok) {
         const data = await response.json();
         setVideoId(data.videoId ?? null);
+        setChannelId(data.channelId ?? null);
       } else {
         console.error('Falha ao carregar latest-video.json');
         setVideoId(null);
+        setChannelId(null);
       }
     } catch (error) {
       console.error('Erro ao buscar vídeo:', error);
@@ -39,7 +42,13 @@ export function YouTubeSection() {
 
   return (
     <div className="space-y-10">
-      <LiveModal isOpen={isLiveModalOpen} onClose={() => setIsLiveModalOpen(false)} videoId={videoId} loading={loadingVideo} />
+      <LiveModal
+        isOpen={isLiveModalOpen}
+        onClose={() => setIsLiveModalOpen(false)}
+        videoId={videoId}
+        channelId={channelId}
+        loading={loadingVideo}
+      />
       {/* Section header */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-3 mb-3">

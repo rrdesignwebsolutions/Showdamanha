@@ -43,8 +43,14 @@ async function fetchG1News() {
     }
 
     const outputPath = path.join(outputDir, 'news.json');
-    fs.writeFileSync(outputPath, JSON.stringify(newsItems, null, 2), 'utf-8');
-    
+    const payload = {
+      items: newsItems,
+      updatedAt: new Date().toISOString(),
+      source: 'G1 Sul de Minas',
+    };
+
+    fs.writeFileSync(outputPath, JSON.stringify(payload, null, 2), 'utf-8');
+
     console.log(`Sucesso! ${newsItems.length} notícias do G1 salvas em ${outputPath}`);
   } catch (error) {
     console.error('Erro ao processar as notícias do G1:', error);

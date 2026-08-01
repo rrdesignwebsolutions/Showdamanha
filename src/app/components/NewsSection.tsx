@@ -3,9 +3,9 @@ import { Newspaper, ArrowRight, Clock } from 'lucide-react';
 
 export interface NewsItem {
   title: string;
-  link: string;
+  url: string;
   source: string;
-  pubDate: string;
+  publishedAt: string;
   description: string;
   category?: string;
 }
@@ -75,7 +75,7 @@ export function NewsSection() {
           if (aScore !== bScore) {
             return bScore - aScore;
           }
-          return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
+          return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
         }),
     [items],
   );
@@ -106,8 +106,17 @@ export function NewsSection() {
       if (!response.ok) {
         throw new Error(`Erro ao carregar notícias: ${response.status}`);
       }
+
       const json = await response.json();
-      const items = json.items ?? [];
+      const rawItems = Array.isArray(json) ? json : Array.isArray(json.items) ? json.items : [];
+      const items = rawItems
+        .map((item: NewsItem) => ({
+          ...item,
+          url: item.url ?? '',
+          publishedAt: item.publishedAt ?? new Date().toISOString(),
+        }))
+        .filter((item: NewsItem) => item.title && item.url);
+
       const updated = json.updatedAt ?? new Date().toISOString();
 
       setNewsItems(items.slice(0, MAX_ITEMS));
@@ -172,15 +181,15 @@ export function NewsSection() {
 
       {!loading && sanitizedItems.length > 0 && (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {sanitizedItems.map(({ title, description, link, source, pubDate, category }) => {
+          {sanitizedItems.map(({ title, description, url, source, publishedAt, category }) => {
             const tag = category || source || 'Notícias';
             const catColor = categoryColors[tag] || '#C9A961';
-            const dateLabel = pubDate ? new Date(pubDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Data indisponível';
+            const dateLabel = publishedAt ? new Date(publishedAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Data indisponível';
 
             return (
               <a
-                key={link}
-                href={link}
+                key={url}
+                href={url}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-2xl p-7 flex flex-col gap-4 transition-transform hover:-translate-y-1 hover:bg-[#24150a]"

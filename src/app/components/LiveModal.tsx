@@ -4,6 +4,7 @@ interface LiveModalProps {
   isOpen: boolean;
   onClose: () => void;
   videoId: string | null;
+  channelId: string | null;
   loading: boolean;
 }
 
@@ -11,7 +12,11 @@ function isLiveSchedule() {
   const now = new Date();
   const day = now.getDay();
   const hour = now.getHours();
-  return day >= 1 && day <= 6 && hour >= 7 && hour < 11;
+  const minute = now.getMinutes();
+  const isWeekday = day >= 1 && day <= 6;
+  const isWithinLiveWindow = hour > 7 || (hour === 7 && minute >= 45);
+  const isBeforeEnd = hour < 11;
+  return isWeekday && isWithinLiveWindow && isBeforeEnd;
 }
 
 function getEmbedHostUrl() {
@@ -21,9 +26,14 @@ function getEmbedHostUrl() {
   return 'https://showdamanha.com';
 }
 
-export function LiveModal({ isOpen, onClose, videoId, loading }: LiveModalProps) {
+export function LiveModal({ isOpen, onClose, videoId, channelId, loading }: LiveModalProps) {
   const liveOpen = isLiveSchedule();
   const embedHostUrl = getEmbedHostUrl();
+  const playerSrc = liveOpen && channelId
+    ? `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&rel=0&modestbranding=1`
+    : videoId
+      ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`
+      : null;
 
   if (!isOpen) return null;
 
@@ -49,10 +59,10 @@ export function LiveModal({ isOpen, onClose, videoId, loading }: LiveModalProps)
               <div className="flex h-full min-h-[420px] items-center justify-center p-6 text-[#B8956A]">
                 Carregando vídeo...
               </div>
-            ) : videoId ? (
+            ) : playerSrc ? (
               <iframe
                 className="h-full w-full"
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+                src={playerSrc}
                 title="Live do Show da Manhã"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

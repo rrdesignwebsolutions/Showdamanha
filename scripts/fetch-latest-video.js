@@ -80,6 +80,7 @@ async function fetchLatestVideo() {
               const latestVideoData = {
                 videoId,
                 fetchedAt: timestamp,
+                channelId: CHANNEL_ID,
                 channelUrl: CHANNEL_URL,
               };
 
