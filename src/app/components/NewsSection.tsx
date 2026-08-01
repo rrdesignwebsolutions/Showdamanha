@@ -115,7 +115,7 @@ export function NewsSection() {
           url: item.url ?? '',
           publishedAt: item.publishedAt ?? new Date().toISOString(),
         }))
-        .filter((item: NewsItem) => item.title && item.url);
+        .filter((item: NewsItem) => item.title && item.url && !/^\s*(vídeos|videos)\b/i.test(item.title));
 
       const updated = json.updatedAt ?? new Date().toISOString();
 
