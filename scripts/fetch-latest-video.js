@@ -1,108 +1,182 @@
 import fs from 'fs';
 import https from 'https';
 
-let CHANNEL_ID = 'UCZkTiNo5UhIcP9XHWG4tGZg';
+const CHANNEL_ID = 'UCZkTiNo5UhIcP9XHWG4tGZg';
 const CHANNEL_URL = 'https://www.youtube.com/@alexandrerobbie';
-const CHANNEL_VIDEOS_URL = 'https://www.youtube.com/@alexandrerobbie/videos';
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
+
+const USER_AGENT =
+  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
 function get(url) {
   return new Promise((resolve, reject) => {
     https
-      .get(url, { headers: { 'User-Agent': USER_AGENT } }, (res) => {
-        let data = '';
-        res.on('data', (chunk) => {
-          data += chunk;
-        });
-        res.on('end', () => {
-          resolve(data);
-        });
-      })
+      .get(
+        url,
+        {
+          headers: {
+            'User-Agent': USER_AGENT,
+            Accept: 'application/xml,text/xml,*/*',
+          },
+        },
+        (res) => {
+          let data = '';
+
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+
+          res.on('end', () => {
+            if (
+              res.statusCode >= 300 &&
+              res.statusCode < 400 &&
+              res.headers.location
+            ) {
+              get(res.headers.location)
+                .then(resolve)
+                .catch(reject);
+              return;
+            }
+
+            if (res.statusCode !== 200) {
+              reject(
+                new Error(
+                  `HTTP ${res.statusCode} ao acessar ${url}`
+                )
+              );
+              return;
+            }
+
+            resolve(data);
+          });
+        }
+      )
       .on('error', reject);
   });
 }
 
-async function extractChannelId() {
-  const html = await get(CHANNEL_URL);
-  const matches = [
-    html.match(/"externalId":"(UC[^"]{21})"/),
-    html.match(/"channelId":"(UC[^"]{21})"/),
-    html.match(/UC[A-Za-z0-9_-]{21}/),
+/**
+ * Busca o vídeo mais recente no RSS oficial do YouTube.
+ */
+async function fetchLatestVideoFromRss() {
+  const RSS_FEED_URL =
+    `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+
+  console.log('🔎 Consultando RSS oficial do YouTube...');
+
+  const data = await get(RSS_FEED_URL);
+
+  const entries = [
+    ...data.matchAll(
+      /<entry>([\s\S]*?)<\/entry>/g
+    ),
   ];
 
-  for (const match of matches) {
-    if (match && match[1]) {
-      return match[1];
-    }
+  if (!entries.length) {
+    throw new Error(
+      'Nenhum vídeo encontrado no RSS do YouTube.'
+    );
   }
 
-  return null;
-}
+  const videos = entries
+    .map((entry) => {
+      const content = entry[1];
 
-async function extractVideoIdFromChannelPage() {
-  const html = await get(CHANNEL_VIDEOS_URL);
-  const uniqueVideoIds = [...new Set(
-    [...html.matchAll(/"videoId":"([A-Za-z0-9_-]{11})"/g)].map((match) => match[1]),
-  )];
+      const videoId =
+        content.match(
+          /<yt:videoId>([^<]+)<\/yt:videoId>/
+        )?.[1];
 
-  if (!uniqueVideoIds.length) {
-    throw new Error('Não foi possível localizar vídeos na página do canal.');
+      const title =
+        content.match(
+          /<title>([\s\S]*?)<\/title>/
+        )?.[1];
+
+      const published =
+        content.match(
+          /<published>([^<]+)<\/published>/
+        )?.[1];
+
+      const updated =
+        content.match(
+          /<updated>([^<]+)<\/updated>/
+        )?.[1];
+
+      return {
+        videoId,
+        title,
+        published,
+        updated,
+      };
+    })
+    .filter((video) => video.videoId);
+
+  if (!videos.length) {
+    throw new Error(
+      'O RSS foi encontrado, mas nenhum videoId foi localizado.'
+    );
   }
 
-  return uniqueVideoIds[0];
+  // Ordena pela data de publicação.
+  videos.sort((a, b) => {
+    return (
+      new Date(b.published || 0) -
+      new Date(a.published || 0)
+    );
+  });
+
+  const latestVideo = videos[0];
+
+  console.log('');
+  console.log('📺 ÚLTIMO VÍDEO ENCONTRADO NO RSS');
+  console.log(`ID: ${latestVideo.videoId}`);
+  console.log(`Título: ${latestVideo.title}`);
+  console.log(`Publicado: ${latestVideo.published}`);
+  console.log('');
+
+  return latestVideo;
 }
 
-async function fetchLatestVideoFromRss() {
-  const RSS_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
-  const data = await get(RSS_FEED_URL);
-  const match = data.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
-
-  if (!match || !match[1]) {
-    throw new Error('Não foi possível extrair o vídeo ID do feed RSS');
-  }
-
-  return match[1];
-}
-
+/**
+ * Executa a busca e salva o JSON.
+ */
 async function fetchLatestVideo() {
-  if (CHANNEL_ID === 'UC_SEU_CHANNEL_ID_AQUI') {
-    console.log('🔍 Tentando descobrir Channel ID automaticamente...');
-    const discoveredId = await extractChannelId();
-    if (discoveredId) {
-      CHANNEL_ID = discoveredId;
-      console.log(`✓ Channel ID descoberto: ${CHANNEL_ID}`);
-    } else {
-      console.error('❌ Não foi possível descobrir o Channel ID automaticamente.');
-      console.error('\nPor favor, configure manualmente em scripts/fetch-latest-video.js:');
-      console.error('1. Vá para https://www.youtube.com/@seu_channel/about');
-      console.error('2. Procure por "Channel ID"');
-      console.error('3. Copie o ID e substitua em: const CHANNEL_ID = "SEU_ID_AQUI"');
-      process.exit(1);
-    }
-  }
-
-  let videoId = null;
-
-  try {
-    videoId = await extractVideoIdFromChannelPage();
-    console.log(`✓ Vídeo obtido da página do canal: ${videoId}`);
-  } catch (error) {
-    console.warn('⚠️  Falha ao buscar pela página do canal. Tentando RSS...');
-    videoId = await fetchLatestVideoFromRss();
-  }
+  const latestVideo = await fetchLatestVideoFromRss();
 
   const latestVideoData = {
-    videoId,
+    videoId: latestVideo.videoId,
+    title: latestVideo.title || '',
+    publishedAt: latestVideo.published || null,
+    updatedAt: latestVideo.updated || null,
     fetchedAt: new Date().toISOString(),
     channelId: CHANNEL_ID,
     channelUrl: CHANNEL_URL,
   };
 
   const outputPath = 'public/latest-video.json';
-  fs.writeFileSync(outputPath, JSON.stringify(latestVideoData, null, 2));
 
-  console.log(`✓ Vídeo mais recente salvo: ${videoId}`);
-  return videoId;
+  fs.writeFileSync(
+    outputPath,
+    JSON.stringify(latestVideoData, null, 2),
+    'utf8'
+  );
+
+  console.log('==========================================');
+  console.log('✓ VÍDEO MAIS RECENTE SALVO');
+  console.log('==========================================');
+  console.log(`Video ID: ${latestVideoData.videoId}`);
+  console.log(`Título: ${latestVideoData.title}`);
+  console.log(
+    `URL: https://www.youtube.com/watch?v=${latestVideoData.videoId}`
+  );
+  console.log(
+    `Publicado: ${latestVideoData.publishedAt}`
+  );
+  console.log(
+    `Atualizado: ${latestVideoData.fetchedAt}`
+  );
+  console.log('==========================================');
+
+  return latestVideoData;
 }
 
 fetchLatestVideo()
@@ -111,11 +185,7 @@ fetchLatestVideo()
     process.exit(0);
   })
   .catch((error) => {
+    console.error('');
     console.error('❌ ERRO:', error.message);
-    console.error('\n⚠️  Instruções:');
-    console.error('1. Abra https://www.youtube.com/@seu_channel/about');
-    console.error('2. Procure por "Channel ID" na página');
-    console.error('3. Copie o ID e atualize em scripts/fetch-latest-video.js:');
-    console.error('   const CHANNEL_ID = "SEU_CHANNEL_ID_AQUI"');
     process.exit(1);
   });
